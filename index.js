@@ -119,8 +119,14 @@ app.get('/api/genres/painting/:id', async (req, res) => {
 });
 
 
-//Returns just the specified painting /api/paintings/single/:id
-
+//Returns just the specified painting 
+app.get('/api/paintings/single/:id', async (req, res) => { 
+    const {data, error} = await supabase 
+    .from('paintings') 
+    .select('paintingID, artists (*), galleries(*), imageFileName, title, shapeID, museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations') 
+    .eq('paintingID',req.params.id);
+    res.send(data); 
+});
 
 
 //Returns limited number of paintings sorted (lowest to highest) by either title or yearOfWork /api/paintings/sort/:title|year/limit/:lim
@@ -131,24 +137,61 @@ app.get('/api/genres/painting/:id', async (req, res) => {
 
 
 
-//Returns the paintings whose title contains the provided substring /api/paintings/search/:substring
+//Returns the paintings whose title contains the provided substring
+app.get('/api/paintings/search/:substring', async (req, res) => { 
+    const search = req.params.substring.toLowerCase();
+    const {data, error} = await supabase 
+    .from('paintings') 
+    .select('paintingID, artists (*), galleries(*), imageFileName, title, shapeID, museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations')     
+    .ilike('title', `%${search}%`)
+    .order('yearOfWork', { ascending: true }); 
+    res.send(data); 
+});
 
 
+//Returns the paintings between two years
+app.get('/api/paintings/years/:y1/:y2', async (req, res) => { 
+const {data, error} = await supabase 
+.from('paintings') 
+.select('paintingID, artists (*), galleries(*), imageFileName, title, shapeID, museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations')        
+.gte('yearOfWork',req.params.y1) 
+.lte('yearOfWork', req.params.y2)
+.order('yearOfWork', { ascending: true }); 
+res.send(data); 
+});
 
-//Returns the paintings between two year /api/paintings/years/:y1/:y2
+
+//Returns all the paintings in a given gallery
+app.get('/api/paintings/galleries/:id', async (req, res) => { 
+    const {data, error} = await supabase 
+    .from('paintings') 
+    .select('paintingID, artists (*), galleries(*), imageFileName, title, shapeID, museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations') 
+    .eq('galleryID',req.params.id)
+    .order('yearOfWork', { ascending: true }); 
+    res.send(data); 
+});
 
 
-
-//Returns all the paintings in a given galler /api/paintings/galleries/:id
-
-
-
-//Returns all the paintings by a given artis /api/paintings/artist/:id
-
+//Returns all the paintings by a given artis
+app.get('/api/paintings/artists/:id', async (req, res) => { 
+    const {data, error} = await supabase 
+    .from('paintings') 
+    .select('paintingID, artists (*), galleries(*), imageFileName, title, shapeID, museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations') 
+    .eq('artistID',req.params.id)
+    .order('yearOfWork', { ascending: true }); 
+    res.send(data); 
+});
 
 
 //Returns all the paintings for a given genre /api/paintings/genre/:id
-
+// app.get('/api/paintings/genre/:id', async (req, res) => { 
+//     const {data, error} = await supabase 
+//     .from('paintings') 
+//     .select('paintingID, title,  yearOfWork') 
+//     .eq('genreID',req.params.id)
+//     .order('yearOfWork', { ascending: true }); 
+//     res.send(data); 
+// });
 
 
 //Returns all the paintings for a given era /api/paintings/era/:id
