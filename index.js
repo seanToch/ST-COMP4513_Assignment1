@@ -184,14 +184,14 @@ app.get('/api/paintings/artists/:id', async (req, res) => {
 
 
 //Returns all the paintings for a given genre /api/paintings/genre/:id
-// app.get('/api/paintings/genre/:id', async (req, res) => { 
-//     const {data, error} = await supabase 
-//     .from('paintings') 
-//     .select('paintingID, title,  yearOfWork') 
-//     .eq('genreID',req.params.id)
-//     .order('yearOfWork', { ascending: true }); 
-//     res.send(data); 
-// });
+app.get('/api/paintings/genre/:id', async (req, res) => { 
+    const {data, error} = await supabase 
+    .from('paintinggenres') 
+    .select('paintings (paintingID, title,  yearOfWork)') 
+    .eq('genreId',req.params.id)
+    .order('paintings (yearOfWork)', { ascending: true }); 
+    res.send(data); 
+});
 
 
 //Returns all the paintings for a given era /api/paintings/era/:id
