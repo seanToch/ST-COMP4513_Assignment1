@@ -1,23 +1,23 @@
 # ST-COMP4513_Assignment1
 
-##Overview
+## Overview
 
 This repository contains the code for an artists API built using Node and Express. Artist, Gallery, Painting, Genre and Era data can be easily fetched using the routes outlined below. Data is returned in JSON format.
 
 
 
 
-##Test Links
+## Test Links
 
-/api/eras
+https://st-comp4513-assignment1.onrender.com/api/eras
 
-/api/galleries
+https://st-comp4513-assignment1.onrender.com/api/galleries
 
-/api/galleries/30
+https://st-comp4513-assignment1.onrender.com/api/galleries/30
 
-/api/galleries/calgary
+https://st-comp4513-assignment1.onrender.com/api/galleries/calgary
 
-/api/galleries/country/fra
+https://st-comp4513-assignment1.onrender.com/api/galleries/country/fra
 
 /api/artists
 
