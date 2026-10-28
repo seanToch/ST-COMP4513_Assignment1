@@ -100,7 +100,7 @@ app.get('/api/galleries/country/:substring', async (req, res) => {
 
 
 
-//Returns all the artists CHECKED + ERROR
+//Returns all the artists
 app.get('/api/artists', async (req, res) => { 
     const {data, error} = await supabase 
     .from('artists') 
@@ -118,7 +118,7 @@ app.get('/api/artists', async (req, res) => {
 
 
 
-//Returns just the specified artist CHECKED + ERROR
+//Returns just the specified artist
 app.get('/api/artists/:id', async (req, res) => { 
     const {data, error} = await supabase 
     .from('artists') 
@@ -142,7 +142,7 @@ app.get('/api/artists/:id', async (req, res) => {
 
 
 
-//Returns the artists whose last name begins with the provided substring CHECKED + ERROR
+//Returns the artists whose last name begins with the provided substring
 app.get('/api/artists/search/:substring', async (req, res) => { 
     const search = req.params.substring.toLowerCase();
     const {data, error} = await supabase 
@@ -167,7 +167,7 @@ app.get('/api/artists/search/:substring', async (req, res) => {
 
 
 
-//Returns the artists whose nationality begins with the provided substring CHECKED + ERROR
+//Returns the artists whose nationality begins with the provided substring
 app.get('/api/artists/country/:substring', async (req, res) => { 
     const search = req.params.substring.toLowerCase();
     const {data, error} = await supabase 
@@ -192,7 +192,7 @@ app.get('/api/artists/country/:substring', async (req, res) => {
 
 
 
-//Returns all the genres CECKED + ERROR
+//Returns all the genres
 app.get('/api/genres', async (req, res) => { 
     const {data, error} = await supabase 
     .from('genres') 
@@ -210,7 +210,7 @@ app.get('/api/genres', async (req, res) => {
 
 
 
-//Returns just the specified genre CHECKED + ERROR
+//Returns just the specified genre
 app.get('/api/genres/:id', async (req, res) => { 
     const {data, error} = await supabase 
     .from('genres') 
@@ -234,7 +234,7 @@ app.get('/api/genres/:id', async (req, res) => {
 
 
 
-//Returns the genres used in a given painting CHECKED + ERROR
+//Returns the genres used in a given painting
 app.get('/api/genres/painting/:id', async (req, res) => { 
     const {data, error} = await supabase 
     .from('paintinggenres') 
@@ -259,7 +259,7 @@ app.get('/api/genres/painting/:id', async (req, res) => {
 
 
 
-//Returns just the specified painting CHECKED + ERROR
+//Returns just the specified painting
 app.get('/api/paintings/single/:id', async (req, res) => { 
     const {data, error} = await supabase 
     .from('paintings') 
@@ -283,7 +283,7 @@ app.get('/api/paintings/single/:id', async (req, res) => {
 
 
 
-//Returns limited number of paintings sorted (lowest to highest) by either title or yearOfWork CHECK + ERROR
+//Returns limited number of paintings sorted (lowest to highest) by either title or yearOfWork ASKED ABOUT REF
 app.get('/api/paintings/sort/:method/limit/:lim', async (req, res) => { 
     const sortColumns = { title: 'title', year: 'yearOfWork' };
     const column = sortColumns[req.params.method];
@@ -291,7 +291,7 @@ app.get('/api/paintings/sort/:method/limit/:lim', async (req, res) => {
   //Check if method is either title or yearOfWork
   if (!column) {
     return res.status(400).json({
-      error: `Method'${req.params.method}' is not valid. Use 'title' or 'year'.`
+      error: `Method'${req.params.method}' Is Not Valid. Use 'title' Or 'year'.`
     });
   }
 
@@ -299,7 +299,7 @@ app.get('/api/paintings/sort/:method/limit/:lim', async (req, res) => {
   const limit = Number(req.params.lim);
   if (!Number.isInteger(limit) || limit <= 0) {
     return res.status(400).json({
-      error: 'Limit must be 0 or more'
+      error: 'Limit Must Be An Integer 0 Or More'
     });
   }
 
@@ -324,7 +324,7 @@ app.get('/api/paintings/sort/:method/limit/:lim', async (req, res) => {
 
   //No results
   if (!data || data.length === 0) {
-    return res.status(404).json({ error: 'No paintings found' });
+    return res.status(404).json({ error: 'No Paintings Found' });
   }
 
   res.send(data);
@@ -333,7 +333,7 @@ app.get('/api/paintings/sort/:method/limit/:lim', async (req, res) => {
 
 
 
-//Skips to a row then returns a limited number of sorted painted by title or yearOfWork CHECKED + ERROR
+//Skips to a row then returns a limited number of sorted painted by title or yearOfWork ASKED ABOUT REF
 app.get('/api/paintings/sort/:method/limit/:lim/skip/:jump', async (req, res) => { 
     const sortColumns = { title: 'title', year: 'yearOfWork' };
     const column = sortColumns[req.params.method];
@@ -384,7 +384,7 @@ app.get('/api/paintings/sort/:method/limit/:lim/skip/:jump', async (req, res) =>
 
 
 
-//Returns the paintings whose title contains the provided substring CHECKED + ERROR
+//Returns the paintings whose title contains the provided substring
 app.get('/api/paintings/search/:substring', async (req, res) => { 
     const search = req.params.substring.toLowerCase();
     const {data, error} = await supabase 
@@ -410,7 +410,7 @@ app.get('/api/paintings/search/:substring', async (req, res) => {
 
 
 
-//Returns the paintings between two years CHECKED + ERROR
+//Returns the paintings between two years
 app.get('/api/paintings/years/:y1/:y2', async (req, res) => { 
     const {data, error} = await supabase 
     .from('paintings') 
@@ -441,7 +441,7 @@ app.get('/api/paintings/years/:y1/:y2', async (req, res) => {
 
 
 
-//Returns all the paintings in a given gallery CHECKED + ERROR
+//Returns all the paintings in a given gallery
 app.get('/api/paintings/galleries/:id', async (req, res) => { 
     const {data, error} = await supabase 
     .from('paintings') 
@@ -467,7 +467,7 @@ app.get('/api/paintings/galleries/:id', async (req, res) => {
 
 
 //Returns all the paintings by a given artist CHECKED + ERROR
-app.get('/api/paintings/artists/:id', async (req, res) => { 
+app.get('/api/paintings/artist/:id', async (req, res) => { 
     const {data, error} = await supabase 
     .from('paintings') 
     .select('paintingID, artists (*), galleries(*), imageFileName, title, shapeID, museumLink, accessionNumber, copyrightText, description, excerpt, yearOfWork, width, height, medium, cost, MSRP, googleLink, googleDescription, wikiLink, jsonAnnotations') 
