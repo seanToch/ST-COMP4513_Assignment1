@@ -1,13 +1,17 @@
+
+//Require ENV
+require('dotenv').config();
+
 //Require Express/Supabase
 const express = require('express'); 
 const supa = require('@supabase/supabase-js'); 
 
+
 //Create app/supabase objects
 const app = express(); 
-const supaUrl = 'https://seqmjkphpowmaitwgclz.supabase.co'; 
-const supaAnonKey = 'sb_publishable_1pYQPb3ldQXTjclR-iLtbw_D3zahwlc'; 
+const supaUrl = process.env.API_BASE_URL;
+const supaAnonKey = process.env.API_SECRET_KEY; 
 const supabase = supa.createClient(supaUrl, supaAnonKey);
-
 
 
 
@@ -617,7 +621,7 @@ app.get('/api/counts/topgenres/:minimum', async (req, res) => {
 
 
 //LISTEN ON PORT 8080
-app.listen(8080, () => { 
+app.listen(process.env.PORT, () => { 
 console.log('listening on port 8080'); 
 console.log('http://literate-acorn-5p9q75j7v652p7qp-8080.app.github.dev'); 
 }); 
