@@ -129,12 +129,103 @@ app.get('/api/paintings/single/:id', async (req, res) => {
 });
 
 
-//Returns limited number of paintings sorted (lowest to highest) by either title or yearOfWork /api/paintings/sort/:title|year/limit/:lim
+
+//Returns limited number of paintings sorted (lowest to highest) by either title or yearOfWork CHECK + ERROR
+app.get('/api/paintings/sort/:method/limit/:lim', async (req, res) => { 
+    const sortColumns = { title: 'title', year: 'yearOfWork' };
+    const column = sortColumns[req.params.method];
+
+  //Check if method is either title or yearOfWork
+  if (!column) {
+    return res.status(400).json({
+      error: `Method'${req.params.method}' is not valid. Use 'title' or 'year'.`
+    });
+  }
+
+  //Check if lim is above 0
+  const limit = Number(req.params.lim);
+  if (!Number.isInteger(limit) || limit <= 0) {
+    return res.status(400).json({
+      error: 'Limit must be 0 or more'
+    });
+  }
+
+  //Query
+  let query = supabase
+    .from('paintings')
+    .select('*, artists(*), galleries(*)')
+    .order(column, { ascending: true });
+
+  //Add limit if greater than 0
+  if (limit > 0) {
+    query = query.limit(limit);
+  }
+
+  //RUN QUERY
+  const { data, error } = await query
+
+  //General error
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  //No results
+  if (!data || data.length === 0) {
+    return res.status(404).json({ error: 'No paintings found' });
+  }
+
+  res.send(data);
+});
 
 
 
-//Skips to a row then returns a limited number of sorted painted by title or yearOfWork /api/paintings/sort/:title|year/limit/:lim/skip/:jump
+//Skips to a row then returns a limited number of sorted painted by title or yearOfWork CHECKED + ERROR
+app.get('/api/paintings/sort/:method/limit/:lim/skip/:jump', async (req, res) => { 
+    const sortColumns = { title: 'title', year: 'yearOfWork' };
+    const column = sortColumns[req.params.method];
 
+  //Check if method is either title or yearOfWork
+  if (!column) {
+    return res.status(400).json({
+      error: `Method'${req.params.method}' is not valid. Use 'title' or 'year'.`
+    });
+  }
+
+  //Check if lim is above 0
+  const limit = Number(req.params.lim);
+  if (!Number.isInteger(limit) || limit < 0) {
+    return res.status(400).json({
+      error: 'Limit must be 0 or more'
+    });
+  }
+
+  //Query
+  let query = supabase
+    .from('paintings')
+    .select('*, artists(*), galleries(*)')
+    .order(column, { ascending: true })
+    .range(req.params.jump, 9999);
+
+  //Add limit if greater than 0
+  if (limit > 0) {
+    query = query.limit(limit);
+  }
+
+  //RUN QUERY
+  const { data, error } = await query
+
+  //General error
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  //No results, Skip Error
+  if (!data || data.length === 0) {
+    return res.status(404).json({ error: 'Skip amount too high, No Paintings Found' });
+  }
+
+  res.send(data);
+});
 
 
 //Returns the paintings whose title contains the provided substring
@@ -183,112 +274,80 @@ app.get('/api/paintings/artists/:id', async (req, res) => {
 });
 
 
-//Returns all the paintings for a given genre /api/paintings/genre/:id
+//Returns all  paintings for a given genre
 app.get('/api/paintings/genre/:id', async (req, res) => { 
     const {data, error} = await supabase 
     .from('paintinggenres') 
-    .select('paintings (paintingID, title,  yearOfWork)') 
+    .select('paintings (paintingID, title,  yearOfWork), genres (genreName)') 
     .eq('genreId',req.params.id)
     .order('paintings (yearOfWork)', { ascending: true }); 
     res.send(data); 
 });
 
 
-//Returns all the paintings for a given era /api/paintings/era/:id
+//Returns all paintings for a given era CHECKED
+app.get('/api/paintings/era/:id', async (req, res) => {
+    const {data, error} = await supabase 
+    .from('paintinggenres') 
+    .select('paintings (paintingID, title,  yearOfWork), genres!inner (genreName)') 
+    .eq('genres.eraID',req.params.id)
+    .order('paintings (yearOfWork)', { ascending: true }); 
+    res.send(data); 
+});
 
+//Returns genre name and number of paintings for each genre, sorted by the number of paintings CHECKED
+app.get('/api/counts/genres', async (req, res) => {
+  const { data, error } = await supabase
+    .from('genres')
+    .select('genreName, paintinggenres(count)');
 
+  const result = data
+    .map(list => ({
+      genreName: list.genreName,
+      paintingCount: list.paintinggenres[0].count
+    }))
+    .sort((a, b) => a.paintingCount - b.paintingCount);
 
-//Returns the genre name and the number of paintings for each genre, sorted by the number of paintings /api/counts/genres
-
-
-
-//Returns the artist name and the number of paintings for each artist, sorted by the number of paintings /api/counts/artists
-
-
-
-//Returns the genre name and the number of paintings for each genre, sorted by the number of paintings for genres with over some number /api/counts/topgenres/:count
-
-
-
-
-app.get('', async (req, res) => { 
-const {data, error} = await supabase 
-.from('status') 
-.select(); 
-res.send(data); 
-}); 
-
-
-
-app.get('/f1/races', async (req, res) => { 
-const {data, error} = await supabase 
-.from('races') 
-.select(` raceId, year, round, name, circuits (name,location,country) `)
-.eq('year',2020) 
-.order('round', { ascending: false }); 
-res.send(data); 
-}); 
-
-
-app.get('/f1/results/:race', async (req, res) => { 
-const {data, error} = await supabase 
-.from('results') 
-.select(` 
-raceId, resultId, positionOrder, races (year, name),  
-drivers (forename,surname), constructors (name) 
-`)    
-.eq('raceId',req.params.race) 
-.order('positionOrder', { ascending: true }); 
-res.send(data); 
+  res.send(result);
 });
 
 
+//Returns artist name and number of paintings for each artist, sorted by the number of paintings CHECKED
+app.get('/api/counts/artists', async (req, res) => {
+  const { data, error } = await supabase
+    .from('artists')
+    .select('firstName, lastName, paintings(count)');
 
-app.get('/f1/qualifying/:race', async (req, res) => { 
-const {data, error} = await supabase 
-.from('qualifying') 
-.select(` 
-qualifyId, position, q1, q2, q3, races (name, year),  
-drivers (forename, surname), constructors (name)
-`)    
-.eq('raceId',req.params.race) 
-.order('position', { ascending: true }); 
-console.log(data);
-res.send(data); 
+  const result = data
+    .map(list => ({
+      artistName: `${list.firstName} ${list.lastName}`,
+      paintingCount: list.paintings[0].count
+    }))
+    .sort((a, b) => b.paintingCount - a.paintingCount);
+
+  res.send(result);
 });
 
 
+//Returns genre name and number of paintings for each genre, sorted by the num of paintings for genres with over given number CHECKED 
+app.get('/api/counts/topgenres/:minimum', async (req, res) => {
+  const { data, error } = await supabase
+    .from('genres')
+    .select('genreName, paintinggenres(count)');
 
-app.get('/f1/races/:y1/:y2', async (req, res) => { 
-const {data, error} = await supabase 
-.from('races') 
-.select(` * `)    
-.gte('year',req.params.y1) 
-.lte('year', req.params.y2)
-.order('raceId', { ascending: true }); 
-console.log(data);
-res.send(data); 
+  const result = data
+    .map(list => ({
+      genreName: list.genreName,
+      paintingCount: list.paintinggenres[0].count
+    }))
+    .filter(item => item.paintingCount > req.params.minimum)
+    .sort((a, b) => b.paintingCount - a.paintingCount);
+
+  res.send(result);
 });
 
 
-//TYK pt 3
-app.get('/f1/drivers/name/:initial/limit/:lim', async (req, res) => { 
-    const name = req.params.initial;
-const {data, error} = await supabase 
-.from('drivers') 
-.select(` * `)    
-.ilike('surname', `${name}%`)
-.order('surname', { ascending: true })
-.limit(req.params.lim);
-console.log(data);
-res.send(data); 
-});
-
-
-
-
-
-
+//LISTEN ON PORT 8080
 app.listen(8080, () => { 
 console.log('listening on port 8080'); 
 console.log('http://literate-acorn-5p9q75j7v652p7qp-8080.app.github.dev'); 
