@@ -15,7 +15,7 @@ const supabase = supa.createClient(supaUrl, supaAnonKey);
 
 
 
-//Returns all the eras CHECKED + ERROR
+//Returns all the eras
 app.get('/api/eras', async (req, res) => { 
     const {data, error} = await supabase 
     .from('eras') 
@@ -33,7 +33,7 @@ app.get('/api/eras', async (req, res) => {
 
 
 
-//Returns all the galleries CHECKED + ERROR
+//Returns all the galleries
 app.get('/api/galleries', async (req, res) => { 
     const {data, error} = await supabase 
     .from('galleries') 
@@ -51,7 +51,7 @@ app.get('/api/galleries', async (req, res) => {
 
 
 
-//Returns just the specified gallery CHECKED + ERROR
+//Returns just the specified gallery
 app.get('/api/galleries/:id', async (req, res) => { 
     const {data, error} = await supabase 
     .from('galleries') 
@@ -75,7 +75,7 @@ app.get('/api/galleries/:id', async (req, res) => {
 
 
 
-//Returns the galleries whose galleryCountry begins with the provided substring CHECKED + ERROR
+//Returns the galleries whose galleryCountry begins with the provided substring
 app.get('/api/galleries/country/:substring', async (req, res) => { 
     const search = req.params.substring.toLowerCase();
     const {data, error} = await supabase 
