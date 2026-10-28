@@ -330,6 +330,20 @@ app.get('/api/paintings/sort/:method/limit/:lim', async (req, res) => {
   res.send(data);
 });
 
+//Handles missing limit value
+app.get('/api/paintings/sort/:method/limit', (req, res) => {
+  return res.status(400).json({error: 'Limit value is required'});
+});
+
+//Handles missing method value
+app.get('/api/paintings/sort/limit/:lim', (req, res) => {
+  return res.status(400).json({error: 'method is required'});
+});
+
+//Handles missing method AND limit values
+app.get('/api/paintings/sort/limit', (req, res) => {
+  return res.status(400).json({error: 'Limit value and method are required'});
+});
 
 
 
@@ -379,6 +393,26 @@ app.get('/api/paintings/sort/:method/limit/:lim/skip/:jump', async (req, res) =>
   }
 
   res.send(data);
+});
+
+//Handles missing skip value
+app.get('/api/paintings/sort/:method/limit/:lim/skip', (req, res) => {
+  return res.status(400).json({error: 'Skip value is required'});
+});
+
+//Handles missing limit value
+app.get('/api/paintings/sort/:method/limit/skip/:jump', (req, res) => {
+  return res.status(400).json({error: 'Limit value is required'});
+});
+
+//Handles missing method value
+app.get('/api/paintings/sort/limit/:lim/skip/:jump', (req, res) => {
+  return res.status(400).json({error: 'Method value is required'});
+});
+
+//Handles missing method, limit and skip values
+app.get('/api/paintings/sort/limit/skip', (req, res) => {
+  return res.status(400).json({error: 'Method, limit and skip values are required'});
 });
 
 
@@ -466,7 +500,7 @@ app.get('/api/paintings/galleries/:id', async (req, res) => {
 
 
 
-//Returns all the paintings by a given artist CHECKED + ERROR
+//Returns all the paintings by a given artist 
 app.get('/api/paintings/artist/:id', async (req, res) => { 
     const {data, error} = await supabase 
     .from('paintings') 
@@ -491,7 +525,7 @@ app.get('/api/paintings/artist/:id', async (req, res) => {
 
 
 
-//Returns all paintings for a given genre CHECKED + ERROR
+//Returns all paintings for a given genre
 app.get('/api/paintings/genre/:id', async (req, res) => { 
     const {data, error} = await supabase 
     .from('paintinggenres') 
@@ -516,7 +550,7 @@ app.get('/api/paintings/genre/:id', async (req, res) => {
 
 
 
-//Returns all paintings for a given era CHECKED + ERROR
+//Returns all paintings for a given era 
 app.get('/api/paintings/era/:id', async (req, res) => {
     const {data, error} = await supabase 
     .from('paintinggenres') 
@@ -541,7 +575,7 @@ app.get('/api/paintings/era/:id', async (req, res) => {
 
 
 
-//Returns genre name and number of paintings for each genre, sorted by the number of paintings CHECKED + ERROR
+//Returns genre name and number of paintings for each genre, sorted by the number of paintings
 app.get('/api/counts/genres', async (req, res) => {
   const { data, error } = await supabase
     .from('genres')
@@ -566,7 +600,7 @@ app.get('/api/counts/genres', async (req, res) => {
 
 
 
-//Returns artist name and number of paintings for each artist, sorted by the number of paintings CHECKED + ERROR
+//Returns artist name and number of paintings for each artist, sorted by the number of paintings
 app.get('/api/counts/artists', async (req, res) => {
   const { data, error } = await supabase
     .from('artists')
@@ -591,7 +625,7 @@ app.get('/api/counts/artists', async (req, res) => {
 
 
 
-//Returns genre name and number of paintings for each genre, sorted by the num of paintings for genres with over given number CHECKED + ERROR
+//Returns genre name and number of paintings for each genre, sorted by the num of paintings for genres with over given number
 app.get('/api/counts/topgenres/:minimum', async (req, res) => {
   const { data, error } = await supabase
     .from('genres')
