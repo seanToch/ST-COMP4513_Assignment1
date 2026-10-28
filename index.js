@@ -620,8 +620,9 @@ app.get('/api/counts/topgenres/:minimum', async (req, res) => {
 });
 
 
-//LISTEN ON PORT 8080
-app.listen(process.env.PORT, () => { 
+//LISTEN ON RENDERS PORT OR 8080
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => { 
 console.log('listening on port 8080'); 
 console.log('http://literate-acorn-5p9q75j7v652p7qp-8080.app.github.dev'); 
 }); 
